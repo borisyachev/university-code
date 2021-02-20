@@ -1,0 +1,56 @@
+The heuristic function, used in the algorithm A*, in the task consists of the sum of 2 values:
+
+1. Manhattan distance - the sum of all distances from the current state to the goal state of every single plate of the puzzle.
+
+2. The depth/level of the current state in the tree of states (the root is the starting state/puzzle),
+which is built from all the moves of the empty plate from the begining of the algorithm.
+
+
+-------------------------------------------------------------
+
+
+C++ implementation of the heuristic function :
+
+int getHeuristic(std::vector<std::vector<int>>& VectorGiven, int level) {
+
+	int sum = level;
+
+	
+	for (int k = 0; k < 9; ++k) {   // finding the position of every plate (0-8) in the starting 
+                                        // puzzle state and in the current puzzle state
+                                        // and evaluating the Manhattan distance
+
+		int goalX, goalY, currX, currY;
+
+		bool found1 = false;
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				if (GoalVec[i][j] == k) {
+					goalX = i;
+					goalY = j;
+					found1 = true;
+					break;
+				}
+			}
+			if (found1) break;
+		}
+
+		bool found2 = false;
+
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				if (VectorGiven[i][j] == k) {
+					currX = i;
+					currY = j;
+					found2 = true;
+					break;
+				}
+			}
+			if (found2) break;
+		}
+
+		sum += ( abs(goalX - currX) + abs(goalY - currY) );
+	}
+
+	return sum;
+}

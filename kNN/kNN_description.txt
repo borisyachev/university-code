@@ -1,0 +1,39 @@
+The task is solved with the help of the k-NN algorithm. The data of the companies - revenue, teamwork, success are used in the realisation as it follows :
+
+1. The revenue is normalised with the min-max normalisation (due to the big values in that field and its difference with the teamwork field (which is presented with the digits 1 - weak, 2 - normal, 3 - good, 4 -perfect)). The algorithm finds the Euclidean distance between the query(company) that we check and every single company given from the document file.
+
+2. Teamwork is presented (as I already mentioned) with the numbers from 1 to 4 respectively for weak, normal, good and perfect. We again evaluate the Euclidean distance between the query and every single company.
+
+From 1 and 2 we find a total sum of both distances which we add to an array storing this exact sum for every company from the document file (as we said the sum is actually the Euclidean distance between the query and every company so we now know which companies have close characteristics with the query company). We then take the K smallest sums (the K closes companies) and we check the corresponding companies' success. The prevalent value (1 for successful and 0 for unsuccessful) is taken and it's decided that our query company also has to have this success (0 or 1).
+(5 or 7 are good numbers for K - since the values that we check are only 0 and 1 (2 values) it's convinient to use odd number for K, and still depending on the number of data we may take a bigger number but again odd)
+
+
+C++ implementation of the normalisation and the creation of the array with the Euclidean distances :
+
+----------------------------------------------------------------------------------
+double normalizedQueryRev = (query.revenue - minRevenue) / (maxRevenue - minRevenue);
+std::unordered_map<double, Company> sumsSet;
+
+for (int i = 0; i < size; ++i) 
+{
+	
+		double sum = 0;
+		double normalizedCurrDataRevenue = 
+           (data[i].revenue - minRevenue) / (maxRevenue - minRevenue);
+
+		double diffInRevenues = normalizedQueryRev - normalizedCurrDataRevenue;
+		sum += diffInRevenues * diffInRevenues;
+
+		
+		short diffInTw = query.tw - data[i].tw; // tw = teamwork
+		sum += diffInTw * diffInTw;
+
+		sum = sqrt(sum);
+		distances.push_back(sum);
+		sumsSet.insert(std::make_pair(sum, data[i]));
+}
+
+------------------------------------------------------------------------------------
+
+
+The document file is presented as a text file (hard coded in this case because of the specific file structure and for easier testing) which is also uploaded as "data.txt". The fields of the file as it follows : revenue | teamwork | success 

@@ -1,0 +1,76 @@
+The board is presented on code as a 2D array (vector<vector<int>>) of integers (the digits from 0 to 8).
+
+The allowed moves in the game are 4 (since we always move a plate around the empty spot in the matrix):
+
+1. Downwards - we move the plate that stays above the empty spot (in case the empty spot is on the first row, the algorithm doesn't perform this move)
+
+2. Upwards - we move the plate that stays below the empty spot (in case the empty spot is on the last row, the algorithm doesn't perform this move)
+
+3. Rightwards - we move the plate that stays on the left of the empty spot (in case the empty spot is on the first column, the algorithm doesn't perform this move)
+
+4. Leftwards - we move the plate that stays on the right of the empty spot (in case the empty spot is on the last column, the algorithm doesn't perform this move)
+
+
+The bad cases described in the braces after each move are omitted by simply returning the current state of the puzzle (which is already marked as visited) and we don't include it in the priority queue for further inspection.
+
+--------------------------------------------------------------------
+
+C++ implementation of the moves :
+
+
+std::vector<std::vector<int>> getRight(std::vector<std::vector<int>> GivenVec, int NullPosX, int NullPosY) {
+
+	if(NullPosY == 2)
+	{
+		return GivenVec;
+	}
+	
+	std::swap(GivenVec[NullPosX][NullPosY], GivenVec[NullPosX][NullPosY + 1]);
+	return GivenVec;
+}
+
+std::vector<std::vector<int>> getLeft(std::vector<std::vector<int>> GivenVec, int NullPosX, int NullPosY) {
+
+	if (NullPosY == 0)
+	{
+		return GivenVec;
+	}
+
+	std::swap(GivenVec[NullPosX][NullPosY], GivenVec[NullPosX][NullPosY - 1]);
+	return GivenVec;
+}
+
+std::vector<std::vector<int>> getUp(std::vector<std::vector<int>> GivenVec, int NullPosX, int NullPosY) {
+
+	if (NullPosX == 0)
+	{
+		return GivenVec;
+	}
+
+	std::swap(GivenVec[NullPosX][NullPosY], GivenVec[NullPosX - 1][NullPosY]);
+	return GivenVec;
+}
+
+std::vector<std::vector<int>> getDown(std::vector<std::vector<int>> GivenVec, int NullPosX, int NullPosY) {
+
+	if (NullPosX == 2)
+	{
+		return GivenVec;
+	}
+
+	std::swap(GivenVec[NullPosX][NullPosY], GivenVec[NullPosX + 1][NullPosY]);
+	return GivenVec;
+}
+
+void findEmptyPiece(std::vector<std::vector<int>>& GivenVec, int& NullPosX, int& NullPosY) {
+
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			if (GivenVec[i][j] == 0) {
+				NullPosX = i;
+				NullPosY = j;
+				return;
+			}
+		}
+	}
+}

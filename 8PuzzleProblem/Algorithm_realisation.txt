@@ -1,0 +1,95 @@
+The algorithm inspects all possible moves from the current state (if such exist and they aren't inspected yet) and it adds them to the priority queue, from which we always take the state with the best heuristic.
+
+
+---------------------------------
+
+C++ implementation :
+
+
+
+void Solve(std::vector<std::vector<int>>& StartVec) {
+
+	Node* root = new Node(StartVec,0);
+
+	Node* finalNode = nullptr;
+
+	Q.push(root);
+
+	while (!Q.empty()) {
+
+		Node* currNode = Q.top();
+		Q.pop();
+		
+		visited.insert(currNode->State);
+
+		if (currNode->State == GoalVec) {
+			finalNode = currNode;
+			break;
+		}
+
+		int NullPosX = -1, NullPosY = -1;
+		findEmptyPiece(currNode->State, NullPosX, NullPosY);
+		
+		Right = getRight(currNode->State, NullPosX, NullPosY);
+		if (visited.find(Right) == visited.end()) 
+		{
+			currNode->rightChild = new Node(Right,currNode->level + 1);
+			ParentsNode.insert({ currNode->rightChild, currNode });
+			Q.push(currNode->rightChild);
+			visited.insert(Right);
+
+		}
+
+		Left = getLeft(currNode->State, NullPosX, NullPosY);
+		if (visited.find(Left) == visited.end())
+		{
+			currNode->leftChild = new Node(Left, currNode->level + 1);
+			ParentsNode.insert({ currNode->leftChild, currNode });
+			Q.push(currNode->leftChild);
+			visited.insert(Left);
+		}
+
+		Up = getUp(currNode->State, NullPosX, NullPosY);
+		if (visited.find(Up) == visited.end())
+		{
+			currNode->upChild = new Node(Up, currNode->level + 1);
+			ParentsNode.insert({ currNode->upChild, currNode });
+			Q.push(currNode->upChild);
+			visited.insert(Up);
+		}
+
+		Down = getDown(currNode->State, NullPosX, NullPosY);
+		if (visited.find(Down) == visited.end())
+		{
+			currNode->downChild = new Node(Down, currNode->level + 1);
+			ParentsNode.insert({ currNode->downChild, currNode });
+			Q.push(currNode->downChild);
+			visited.insert(Down);
+		}
+
+	}
+	
+	std::vector<Node*> Path;
+	Node* curr = finalNode;
+	Path.push_back(curr);
+	while (curr != root) {
+		auto it = ParentsNode.find(curr);
+		if (it != ParentsNode.end()) {
+			Path.push_back(it->second);
+			curr = it->second;
+		}
+	}
+	
+	int PathSize = Path.size();
+	for (int i = PathSize - 1; i >= 0; --i) {
+		std::cout << "State[" << PathSize - i << "]: " << "\n\n";
+		print(Path[i]->State);
+		std::cout << "\n\n";
+	}
+	auto it = ParentsNode.begin();
+	while (it != ParentsNode.end()) {
+		delete it->first;
+		++it;
+	}
+	delete root;
+}
